@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kkoix.todo.api.rest.mapper.TodoMapper">
+
+	<resultMap id="todoRefMap" type="todoRefModel" >
+		<result property="todoSeq" 		column="todo_seq"/>
+		<result property="todoNm" 		column="todo_nm"/>
+		<result property="todoCont" 	column="todo_cont"/>		
+		<result property="todoSts" 		column="todo_sts"/>
+		<result property="todoImptTyp" 	column="todo_impt_typ"/>	
+		<result property="updId" 		column="upd_id"/>
+		<result property="updDt" 		column="upd_dt"/>
+		<result property="crtId" 		column="crt_id"/>
+		<result property="crtDt" 		column="crt_dt"/>
+	</resultMap>
+
+	<resultMap id="todoMap"  type="todoModel">
+		<id property="todoSeq" 			column="todo_seq" />
+		<result property="todoNm" 		column="todo_nm"/>
+		<result property="todoCont" 	column="todo_cont"/>
+		<result property="todoSts" 		column="todo_sts"/>
+		<result property="todoImptTyp" 	column="todo_impt_typ"/>		
+		<result property="updId" 		column="upd_id"/>
+		<result property="updDt" 		column="upd_dt"/>
+		<result property="crtId" 		column="crt_id"/>
+		<result property="crtDt" 		column="crt_dt"/>		
+		<collection property="todoRefList" column="{todoSeq=todo_seq}" ofType="todoRefModel" select="selectChildTodoList"/>
+	</resultMap>
+
+	<!-- Todo 리스트 조건절 -->
+	<sql id="todoListWhere">
+		<where>
+		   	  AND obsts='N'		
+			<if test='@org.apache.commons.lang3.StringUtils@isNotBlank(todoSts)'>
+		   	  AND todo_sts = #{todoSts}
+			</if>		
+			<if test='@org.apache.commons.lang3.StringUtils@isNotBlank(todoImptTyp)'>
+		      AND todo_impt_typ = #{todoImptTyp}
+			</if>	
+			<if test='@org.apache.commons.lang3.StringUtils@isNotBlank(searchTyp) and @org.apache.commons.lang3.StringUtils@isNotBlank(searchKeyword)'> 
+				<choose>
+					<when test='searchTyp eq "NM"'>
+		   	  AND todo_nm LIKE CONCAT('%',#{searchKeyword},'%')
+					</when>
+					<when test='searchTyp eq "CONT"'>
+		   	  AND todo_cont LIKE CONCAT('%',#{searchKeyword},'%')
+					</when>								
+				</choose>
+			</if>									
+		</where>			
+	</sql>
+	
+	<!-- Todo 리스트 조회 -->
+	<select id="selectTodoList" resultMap="todoMap" parameterType="todoModel">
+		SELECT
+				todo_seq,
+				todo_nm,
+				todo_cont,
+				todo_sts,
+				todo_impt_typ,
+				TO_CHAR(upd_dt, 'yyyy-MM-dd') AS upd_dt,
+				TO_CHAR(crt_dt, 'yyyy-MM-dd') AS crt_dt
+		  FROM  ts_todo
+		  <include refid="todoListWhere" />		  
+	  ORDER BY  
+		<choose>
+		  	<when test='@org.apache.commons.lang3.StringUtils@isNotBlank(ordCol) and @org.apache.commons.lang3.StringUtils@isNotBlank(ordTyp)'>
+		  		<if test='ordCol eq "todoSeq"'>
+		  			todo_seq
+		  		</if>
+		  		<if test='ordTyp eq "asc"'>
+		  			ASC
+		  		</if>		
+		  		<if test='ordTyp eq "desc"'>
+		  			DESC
+		  		</if>		  		  		
+		  	</when>	  
+			<otherwise>
+				todo_seq DESC
+			</otherwise>
+		</choose> 
+
+		 LIMIT  #{startIndex}, #{endIndex}		   
+	</select>
+	
+	<!-- Todo 리스트 총 개수 조회 -->
+	<select id="selectTodoListCount" resultType="Integer" parameterType="todoModel">
+		SELECT
+				COUNT(*)
+		  FROM  ts_todo
+		  <include refid="todoListWhere" />
+	</select>
+	
+	<!-- Todo 리스트 조회 -->
+	<select id="selectChildTodoList" resultMap="todoRefMap" parameterType="todoModel">
+		SELECT
+				ttr.todo_seq,
+				tt.todo_nm,
+				tt.todo_cont,
+				tt.todo_sts,
+				tt.todo_impt_typ,
+				TO_CHAR(tt.upd_dt, 'yyyy-MM-dd') AS upd_dt,
+				TO_CHAR(tt.crt_dt, 'yyyy-MM-dd') AS crt_dt				
+		  FROM  ts_todo_ref  ttr
+	INNER JOIN  ts_todo tt
+            ON  tt.todo_seq = ttr.todo_seq	
+		 WHERE  ttr.parent_todo_seq = #{todoSeq}
+		   AND  tt.obsts='N'
+	  ORDER BY  ttr.todo_ord ASC
+	</select>	
+	
+	<!-- Todo 상세 -->
+	<select id="selectTodoDetail" resultMap="todoMap" parameterType="todoModel">
+		SELECT
+				todo_seq,
+				todo_nm,
+				todo_cont,
+				todo_sts,
+				todo_impt_typ,
+				TO_CHAR(upd_dt, 'yyyy-MM-dd') AS upd_dt,
+				TO_CHAR(crt_dt, 'yyyy-MM-dd') AS crt_dt
+		  FROM  ts_todo
+		 WHERE  todo_seq = #{todoSeq}
+		   AND  obsts='N'
+	</select>
+
+	<!-- Todo 참조 가능 TODO리스트 -todoSeq가 존재하면 todoSeq 자기 자신과 자기 자신이랑 참조관계에 있는 Todo는 제외합니다. -->
+	<select id="selectTodoRefPosList" resultMap="todoRefMap" parameterType="todoModel">
+		SELECT  
+			   tt.todo_seq,
+			   tt.todo_nm,
+			   tt.todo_impt_typ	
+		  FROM ts_todo tt
+		<where>
+			<if test='todoSeq != null and todoSeq != 0'>		  
+		   AND tt.todo_seq != #{todoSeq}
+			</if>
+		   AND tt.todo_sts = 'I'
+		   AND tt.obsts = 'N'	  		
+		   AND NOT EXISTS (
+					SELECT parent_todo_seq
+				  	  FROM ts_todo_ref
+				 	 WHERE (todo_seq = tt.todo_seq OR parent_todo_seq = tt.todo_seq)
+				 )
+		</where>
+	</select>	
+	
+	<!-- Todo가 참조 상태 인지 확인합니다. -->
+	<select id="selectHasTodoRef" resultType="boolean" parameterType="int">
+		SELECT COUNT(*)
+		  FROM ts_todo_ref
+		 WHERE todo_seq = #{todoSeq}
+		 LIMIT 1
+	</select>		
+	
+	<!-- Todo 참조 삭제 -->
+	<delete id="deleteTodoRef">
+		DELETE 
+		  FROM ts_todo_ref
+		 WHERE parent_todo_seq = #{todoSeq}
+	</delete>		
+	
+	<!-- Todo 수정 -->
+	<update id="updateTodo">
+		UPDATE ts_todo
+		   SET 
+		  		todo_sts = #{todoSts},
+				todo_impt_typ = #{todoImptTyp},  
+				todo_nm = #{todoNm},
+				todo_cont = #{todoCont},
+				upd_dt = NOW()
+		 WHERE todo_seq = #{todoSeq}
+	</update>	
+	
+	<!-- Todo 저장 -->
+	<insert id="insertTodoRef">
+		INSERT INTO ts_todo_ref
+		(
+			todo_seq,
+			parent_todo_seq,
+			todo_ord,
+			upd_dt,
+			crt_dt
+		)
+		VALUES
+		(	
+			#{todoSeq},
+			#{parentTodoSeq},
+			#{todoOrd},
+			NOW(),
+			NOW()
+		)
+	</insert>
+	
+	<!-- Todo 저장 -->
+	<insert id="insertTodo" useGeneratedKeys="true" keyProperty="todoSeq">
+		INSERT INTO ts_todo
+		(
+			todo_nm,
+			todo_cont,
+			todo_sts,
+			todo_impt_typ,
+			obsts,
+			upd_dt,
+			crt_dt		
+		) VALUES
+		(  
+			#{todoNm},
+			#{todoCont},
+			'I',
+			#{todoImptTyp},
+			'N',
+			NOW(),
+			NOW()
+		)
+	</insert>
+	
+	<!-- Todo 삭제 -->
+	<delete id="updateRemoveTodo">
+		UPDATE ts_todo
+		   SET obsts = 'D',
+		   	   upd_dt = NOW()
+		 WHERE todo_seq = #{todoSeq}
+	</delete>	
+	
+	<!-- Todo 진행 상태 변경 -->
+	<update id="updateTodoSts">
+		UPDATE ts_todo
+		   SET 
+		  	   todo_sts = #{todoSts},
+			   upd_dt = NOW()
+		 WHERE todo_seq = #{todoSeq}
+	</update>	
+	
+	<!-- Todo 진행 상태 변경 -->
+	<select id="selectIsNotTodoChildAllCompleted" resultType="boolean" parameterType="int">
+		SELECT COUNT(*)
+		  FROM ts_todo tt
+	INNER JOIN ts_todo_ref ttr
+			ON tt.todo_seq = ttr.todo_seq
+		 WHERE tt.obsts = 'N'
+		   AND tt.todo_sts != 'C'
+		   AND ttr.parent_todo_seq = #{todoSeq}
+	</select>
+
+</mapper>
