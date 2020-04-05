@@ -10,6 +10,7 @@
 ## 실행 필수 내용
 	- lombok 필요
 	- GIT URL : https://github.com/tanggu78/todo
+	- GIT Clone하여 소스를 받아 주세요. 특별한 사항은 없습니다.
 	- 초기 포트 : 8097(application.properties에서 변경 가능)
 
 ## 사용 설명
