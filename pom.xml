@@ -9,11 +9,11 @@
         <relativePath/>
     </parent>
     <groupId>com.kkoix.todo</groupId>
-    <artifactId>app</artifactId>
+    <artifactId>todo-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
     <!-- <packaging>jar</packaging> -->
-    <name>app</name>
+    <name>todo-service</name>
     <description>Todo App</description>
 
     <properties>
