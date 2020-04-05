@@ -7,7 +7,9 @@ import org.springframework.context.annotation.Configuration;
  
 @Configuration
 public class WebConfiguration {
-    @Bean
+	
+    @SuppressWarnings("rawtypes")
+	@Bean
     ServletRegistrationBean h2servletRegistration(){
         ServletRegistrationBean registrationBean = new ServletRegistrationBean( new WebServlet());
         registrationBean.addUrlMappings("/console/*");

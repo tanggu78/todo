@@ -50,7 +50,7 @@ public interface TodoMapper {
 	
 	/**
 	 * 개요: Todo 삭제
-	 * @Method Name : deleteTodo
+	 * @Method Name : deleteTodoRef
 	 * @author tanggu
 	 * @param modifyTodoModel
 	 */
@@ -65,7 +65,7 @@ public interface TodoMapper {
 	public void updateTodo(ModifyTodoModel modifyTodoModel);
 	
 	/**
-	 * 개요: Todo 등록
+	 * 개요: Todo 참조 등록
 	 * @Method Name : insertTodoRef
 	 * @author tanggu
 	 * @param modifyTodoModel
@@ -77,7 +77,6 @@ public interface TodoMapper {
 	 * @Method Name : updateRemoveTodo
 	 * @author tanggu
 	 * @param modifyTodoModel
-	 * @return
 	 */
 	public void updateRemoveTodo(ModifyTodoModel modifyTodoModel);
 	
@@ -86,12 +85,11 @@ public interface TodoMapper {
 	 * @Method Name : insertTodo
 	 * @author tanggu
 	 * @param createTodoModel
-	 * @return
 	 */
 	public void insertTodo(CreateTodoModel createTodoModel);
 
 	/**
-	 * 개요: Todo가 이미 참조 되었는지 확인
+	 * 개요: Todo가 이미 참조 되어 있는지 확인
 	 * @Method Name : selectHasTodoRef
 	 * @author tanggu
 	 * @param todoSeq
@@ -100,7 +98,7 @@ public interface TodoMapper {
 	public boolean selectHasTodoRef(int todoSeq);
 	
 	/**
-	 * 개요: Todo진행 완료
+	 * 개요: Todo진행 업데이트
 	 * @Method Name : updateTodoSts
 	 * @author tanggu
 	 * @param modifyTodoModel

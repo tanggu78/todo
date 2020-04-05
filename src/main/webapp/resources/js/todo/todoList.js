@@ -152,7 +152,7 @@ function fncTodoDetailMapping(_jsonData){
 	/* Todo 상세 팝업 초기 enabled */
 	_$todoRefModal.find('input, select, textarea').prop('disabled', false);		
 	
-	/* 상세 조회 후 모달 팝업의 전역 el에 값 세팅해놓습니다. */
+	/* 상세 조회 후 모달 팝업의 전역 el에 값 세팅해 합니다. */
 	$('.modal-dialog').data('todoSeq', _jsonData.todoDetail.todoSeq);
 	
 	_$todoRefModal.find('[name="todoSts"]').val(_jsonData.todoDetail.todoSts);
@@ -201,6 +201,9 @@ function fncTodoDetailMapping(_jsonData){
 /* 참조 테이블 매핑 */
 function fncRefSortableMapping(_todoRefPosList){
 	
+	_$todoRefModal.find('.refPos').show();
+	_$todoRefModal.find('.refIms').hide();
+	
 	var _$sortable2 = $('#sortable2');
 	/* 참조할 Todo */
 	_$sortable2.empty();
@@ -234,13 +237,13 @@ function fncGetTodoList(){
 	    	$(_row).addClass("tbl-item");
 	    	
 	    	if(_data.todoSts == 'C'){
-	    		$(_row).addClass("active");
+	    		$(_row).addClass("warning");
 	    	}
 	    	
 	    },
 	    columnDefs: [
 		  { targets: [0], className: 'img' },
-		  { targets: [1], className: 'td-block', orderable: false  }
+		  { targets: [1], className: 'td-block' }
 	    ],
 		ajax : {
 			url : '/v1/todo/list',
@@ -257,6 +260,8 @@ function fncGetTodoList(){
 
 				_json.ordCol = _d.columns[_d.order[0].column].data;		//정렬 컬럼				
 				_json.ordTyp = _d.order[0].dir;							//정렬 Type
+				
+				console.log(_json.ordCol);
 
 				/* 검색 조건 */
 				_json.todoSts= $('#todoSts').val();        							/* Todo 상태  */
@@ -278,14 +283,18 @@ function fncGetTodoList(){
 					else if(_row.todoImptTyp == 'NOR') _stsTag = '<span class="label label-sm label-info">일반</span>&nbsp;';
 					else if(_row.todoImptTyp == 'MJR') _stsTag = '<span class="label label-sm label-danger">중요</span>&nbsp;';
 					
-					_iconTxt = '<span class="ui-icon ui-icon-check" data-todo-seq="'+ _row.todoSeq +'"></span>&nbsp;&nbsp;&nbsp;'+
-								'<span class="ui-icon ui-icon-closethick" data-todo-seq="'+ _row.todoSeq +'"></span>';
-					
-					if(_row.todoSts == 'C')
-						_lineTxt='style="text-decoration:line-through;"';
-					else
+					/* 작성글 line-through 추가하고 삭제 버튼 노출   */
+					if(_row.todoSts == 'C'){
+						_lineTxt='style="text-decoration:line-through;"';								
+						_iconTxt = '<span class="ui-icon ui-icon-closethick" data-todo-seq="'+ _row.todoSeq +'"></span>';	
+					/* 진행중일경우 완료 버튼 하고 삭제 버튼 노출 */
+					}else{
 						_lineTxt='';
-					
+						
+						_iconTxt = '<span class="ui-icon ui-icon-check" data-todo-seq="'+ _row.todoSeq +'"></span>&nbsp;&nbsp;&nbsp;'+
+						'<span class="ui-icon ui-icon-closethick" data-todo-seq="'+ _row.todoSeq +'"></span>';
+					}
+
 					_todoNmHtml =   '<p class="date">'+ _row.crtDt +'</p>'+
 									'<p class="insert" style="float:right;">'+ _iconTxt +'</p>'+
 									'<p class="title" '+ _lineTxt +'>' + _stsTag + _row.todoNm +'</p>' +
@@ -386,7 +395,7 @@ function fncCreateTodo(){
 	
 	/* 등록 유효성 체크 */
 	if(!fncIsValidCheck('create')){
-		return
+		return;
 	}
 	
 	if(!confirm('TODO를 등록 하시겠습니까?')){
@@ -423,7 +432,7 @@ function fncIsValidCheck(_tranType){
 	/* 중요도 필수 체크 */
 	if(ParamValidate.isEmpty(_$todoImptTypObj.val())){
 		alert('중요도를 선택해 주세요.');
-		_$todoStsObj.focus();
+		_$todoImptTypObj.focus();
 		return false;
 	}	
 	
@@ -500,6 +509,7 @@ function fncCompletedTodo(_todoSeq){
 		cache:false,
 		async:false,
 		success: function(_jsonData){
+			console.log(_jsonData);
 			alert('TODO가 완료되었습니다.');
 			_$todoRefModal.modal("hide");
 			fncTodoSearchDraw(false);

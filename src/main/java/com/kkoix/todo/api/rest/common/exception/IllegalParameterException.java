@@ -1,14 +1,5 @@
 package com.kkoix.todo.api.rest.common.exception;
 
-/**
- * <pre>
- * com.ckci.admin.common.exception
- * IllegalParameterException.java
- * </pre>
- * 
- * Created on 2014. 8. 20.
- * @author: kachoko78@gmail.com, Bluedigm
- */
 public class IllegalParameterException extends RuntimeException {
 
     public IllegalParameterException() {

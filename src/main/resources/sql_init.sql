@@ -30,15 +30,15 @@ CREATE TABLE ts_todo (
 );
 
 INSERT INTO ts_todo(todo_nm,todo_cont,todo_sts,todo_impt_typ,obsts,upd_dt,crt_dt)
-VALUES('안녕 제목1','안녕 본문1','I','MNR','N',CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
+VALUES('카카오 과제 하기','카카오 과제 2020-04-05 23:5959까지 완료 하기','I','MJR','N',CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
 INSERT INTO ts_todo(todo_nm,todo_cont,todo_sts,todo_impt_typ,obsts,upd_dt,crt_dt)
-VALUES('안녕 제목2','안녕 본문2','I','MNR','N',CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
+VALUES('이번주내로 맥주 먹기','시원하게 하게 치킨과 함께 맥주 먹기','I','MNR','N',CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
 INSERT INTO ts_todo(todo_nm,todo_cont,todo_sts,todo_impt_typ,obsts,upd_dt,crt_dt)
-VALUES('안녕 제목3','안녕 본문3','I','MNR','N',CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
+VALUES('카카오 프렌즈샵에서 캐릭터 상품 사기','노트와 인형 그리고 조카 선물 구매 하기','I','NOR','N',CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
 INSERT INTO ts_todo(todo_nm,todo_cont,todo_sts,todo_impt_typ,obsts,upd_dt,crt_dt)
-VALUES('안녕 제목4','안녕 본문4','I','MNR','N',CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
+VALUES('콘서트 티켓 구매해서 공연 보러가기','주연, 소찬휘, 공연장소, 한국소리문화의전당 연지홀. 예매수수료, 장당 1,000원 - 언능 가서 신나게 놀구 싶다. 소찬휘가 짱이야~ ','I','MNR','N',CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
 INSERT INTO ts_todo(todo_nm,todo_cont,todo_sts,todo_impt_typ,obsts,upd_dt,crt_dt)
-VALUES('안녕 제목5','안녕 본문5','I','MNR','N',CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
+VALUES('하루 종일 넷플릭스 보기','이번 주 안에 꼭 실천하기, 집 콕해서 하루종일 넷플릭스 보기 - 브루클린 나인, 그레이트 뉴스, 테라스 하우스, 셰프의 테이블, 보디가드, 오티스의 비밀 상담소, 데리 걸스, 빌어먹을 세상 따위 등등 꼭!! 하기!!','I','MNR','N',CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP());
 
 -- TODO 참조 리스트
 drop table if exists ts_todo_ref;

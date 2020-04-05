@@ -68,6 +68,9 @@
 		  		<if test='ordCol eq "todoSeq"'>
 		  			todo_seq
 		  		</if>
+		  		<if test='ordCol eq "todoNm"'>
+		  			todo_nm
+		  		</if> 				  		
 		  		<if test='ordTyp eq "asc"'>
 		  			ASC
 		  		</if>		

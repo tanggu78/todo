@@ -47,7 +47,10 @@
 	                            </div>	                        
 		                    </div>
 		            	</div>      
-                    </div>                          
+                    </div>        
+                   <div class="col-lg-12 refPos" style="margin-bottom:10px;color:red;">
+                    	* 완료된 참조 TODOS는 참조에서 제외할 수 없으며, 다른 TODO에참조관계에 있는 TODO는 참조 목록에서 제외 됩니다.
+                   </div>                                       
                     <div class="col-lg-6 refPos">
                         <div class="panel">
                             <div class="panel-body"><h4 class="block-heading">참조된 TODO</h4>
@@ -61,9 +64,9 @@
 								<ul id="sortable2" class="connectedSortable"></ul>
                             </div>
                         </div>
-                   </div>  
-                   <div class="col-lg-12 refIms">
-                    	이미 참조상태인 TODO 입니다. 해당 TODO는 참조 하거나 참조 될 수 없습니다.
+                   </div>
+                   <div class="col-lg-12 refIms" style="color:red;">
+                    	* 이미 참조상태인 TODO 입니다. 해당 TODO는 참조 되거나 참조 할 수 없습니다.
                    </div>                        
                </div>     
                <div class="modal-footer">

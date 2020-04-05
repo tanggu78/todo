@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,9 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MappingTodoRefModel {
 	
+	@ApiModelProperty(value = "참조 Todo Seq")
 	private int todoSeq;
-	private String todoOrd;
+	
+	@ApiModelProperty(value = "참조 Todo 순서")
+	private int todoOrd;
 }
