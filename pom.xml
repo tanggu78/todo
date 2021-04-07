@@ -11,7 +11,7 @@
     <groupId>com.kkoix.todo</groupId>
     <artifactId>todo-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     <!-- <packaging>jar</packaging> -->
     <name>todo-service</name>
     <description>Todo App</description>
